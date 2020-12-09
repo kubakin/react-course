@@ -7,7 +7,12 @@ let personalMovieDB = {
     genres: '',
     privat: '',
 }
-const film = prompt('Один из последних фильмов, которые вы смотрели?','')
-const rating = prompt('На сколько оцените его?','')
-personalMovieDB.movies.push({film:rating})
+const film = prompt('Один из последних фильмов, которые вы смотрели?',''),
+      rating = prompt('На сколько оцените его?',''),
+      film2 = prompt('Один из последних фильмов, которые вы смотрели?',''),
+      rating2 = prompt('На сколько оцените его?','');
+// personalMovieDB.movies.push({film:rating})
+// console.log(personalMovieDB)
+personalMovieDB.movies[film] = rating
+personalMovieDB.movies[film2] = rating2
 console.log(personalMovieDB)
