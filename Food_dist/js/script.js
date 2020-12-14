@@ -76,7 +76,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function hideModal() {
         document.documentElement.style.overflow = "scroll";
-        modal.classList.toggle("show");
+        modal.classList.remove('show');
     }
 
     btns.forEach((btn) => {
@@ -86,7 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     modal.addEventListener("click", (e) => {
-        if (e.target.classList === modal || e.target.getAttribute('data-close') == '') {
+        if (e.target.classList === modal.classList || e.target.getAttribute('data-close') == '') {
             hideModal();
         }
     });
@@ -159,8 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             const statusMessage = document.createElement('div');
-            statusMessage.classList.add('status')
-            statusMessage.textContent = message.loading;
+            statusMessage.classList.add('lds-dual-ring')
             form.append(statusMessage);
             const request = new XMLHttpRequest();
             request.open('POST', 'server.php');
@@ -168,8 +167,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const formData = new FormData(form);
             request.send(formData);
             request.addEventListener('load', () => {
+                statusMessage.remove();
                 if (request.status == 200) {
                     showThanksModal(message.success);
+                    form.reset();
                 } else {
                     showThanksModal(message.fail);
                 }
@@ -179,7 +180,7 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     const forms = document.querySelectorAll('form');
     const message = {
-        loading: 'Loading',
+        loading: '<div class="lds-dual-ring"></div>',
         success: 'Спасибо',
         fail: 'Epic fail!',
     }
@@ -206,10 +207,12 @@ document.addEventListener("DOMContentLoaded", () => {
         `
         const mod = document.querySelector('.modal');
         mod.append(thxModal);
-        setTimeout(() => {
+        const intervalID = setTimeout(() => {
             thxModal.remove();
             prevModal.classList.add('show');
             prevModal.classList.remove('hide');
+            hideModal();
+
         }, 4000);
 
     }
