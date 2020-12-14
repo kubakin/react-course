@@ -84,11 +84,9 @@ document.addEventListener("DOMContentLoaded", () => {
             showModal();
         });
     });
-    modalClose.addEventListener("click", () => {
-        hideModal();
-    });
+
     modal.addEventListener("click", (e) => {
-        if (e.target.classList === modal) {
+        if (e.target.classList === modal || e.target.getAttribute('data-close') == '') {
             hideModal();
         }
     });
@@ -154,5 +152,66 @@ document.addEventListener("DOMContentLoaded", () => {
     container.innerHTML += k.addToPage();
     container.innerHTML += k.addToPage();
     container.innerHTML += k.addToPage();
+
+
+
+    function postData(form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const statusMessage = document.createElement('div');
+            statusMessage.classList.add('status')
+            statusMessage.textContent = message.loading;
+            form.append(statusMessage);
+            const request = new XMLHttpRequest();
+            request.open('POST', 'server.php');
+            //request.setRequestHeader('Content-type', 'multipart/form-data') при отправке формы не требуется
+            const formData = new FormData(form);
+            request.send(formData);
+            request.addEventListener('load', () => {
+                if (request.status == 200) {
+                    showThanksModal(message.success);
+                } else {
+                    showThanksModal(message.fail);
+                }
+
+            })
+        });
+    };
+    const forms = document.querySelectorAll('form');
+    const message = {
+        loading: 'Loading',
+        success: 'Спасибо',
+        fail: 'Epic fail!',
+    }
+
+
+    forms.forEach(form => {
+        console.log(form)
+        postData(form);
+    })
+
+
+    function showThanksModal(msg) {
+        const prevModal = document.querySelector('.modal__dialog');
+        prevModal.classList.add('hide');
+        // showModal();
+        const thxModal = document.createElement('div');
+        thxModal.classList.add('modal__dialog');
+        thxModal.innerHTML = `
+        <div class='modal__content'>
+            <div data-close class="modal__close">×</div>
+            <div class="modal__title">${msg}</div>
+            <button data-close class="btn btn_dark btn_min">ОК</button>
+        </div>
+        `
+        const mod = document.querySelector('.modal');
+        mod.append(thxModal);
+        setTimeout(() => {
+            thxModal.remove();
+            prevModal.classList.add('show');
+            prevModal.classList.remove('hide');
+        }, 4000);
+
+    }
 
 });
