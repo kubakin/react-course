@@ -24,7 +24,8 @@ document.addEventListener("DOMContentLoaded", () => {
     hideTabContent();
     showTabContent();
     tabsParent.addEventListener("click", (e) => {
-        if (e.target && e.target.classList.contains("tabheader__item")) {
+        if (e.target && e.target.classList.contains(
+                "tabheader__item")) {
             tabs.forEach((item, idx) => {
                 if (e.target == item) {
                     hideTabContent();
@@ -50,8 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
             let hours;
             let min;
             let sec;
-            t[0].innerHTML = day = Math.floor(dl / (1000 * 60 * 60 * 24));
-            t[1].innerHTML = hours = Math.floor((dl / (1000 * 60 * 60)) % 24);
+            t[0].innerHTML = day = Math.floor(dl / (1000 * 60 * 60 *
+                24));
+            t[1].innerHTML = hours = Math.floor((dl / (1000 * 60 *
+                60)) % 24);
             t[2].innerHTML = min = Math.floor((dl / (1000 * 60)) % 60);
             t[3].innerHTML = sec = Math.floor((dl / 1000) % 60);
         }
@@ -90,10 +93,66 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     document.addEventListener("keydown", (e) => {
-        if (modal.classList.contains("show") && e.key === "Escape") {
+        if (modal.classList.contains("show") && e.key ===
+            "Escape") {
             hideModal();
         }
     });
 
     const intervaID = setTimeout(showModal, 15000);
+
+    function showWindowByScroll() {
+        if (window.pageYOffset + document.documentElement
+            .clientHeight >= document.documentElement.scrollHeight) {
+            showModal();
+            window.removeEventListener('scroll', showWindowByScroll);
+        }
+    }
+
+    window.addEventListener('scroll', showWindowByScroll);
+
+
+
+
+
+
+    //Классы
+
+
+    class Menu {
+        constructor(name, text, price, picture) {
+            this.price = price;
+            this.name = name;
+            this.text = text;
+            this.picture = picture;
+        }
+    };
+
+    class Card extends Menu {
+        constructor(name, text, price, picture) {
+            super(name, text, price, picture);
+        }
+        addToPage() {
+            console.log(this.name)
+            return `<div class="menu__item">
+            <img src=${this.picture} alt="vegy">
+            <h3 class="menu__item-subtitle">${this.name}</h3>
+            <div class="menu__item-descr">${this.text}</div>
+            <div class="menu__item-divider"></div>
+            <div class="menu__item-price">
+                <div class="menu__item-cost">Цена:</div>
+                <div class="menu__item-total"><span>${this.price}</span> грн/день</div>
+            </div>
+        </div>`
+        }
+    }
+    const container = document.querySelector('.menu__field .container');
+    const cards = document.querySelectorAll('.menu__item')
+    console.log(container);
+    container.innerHTML = '';
+    const k = new Card('Fit', 'qwerty', 400, 'img/tabs/elite.jpg');
+    container.innerHTML += k.addToPage();
+    container.innerHTML += k.addToPage();
+    container.innerHTML += k.addToPage();
+
 });
