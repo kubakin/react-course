@@ -71,6 +71,10 @@ let personalMovieDB = {
 // personalMovieDB.setRatingFilm();
 // personalMovieDB.toggleMyVisibleDB();
 // personalMovieDB.showDataBD();
-let el = document.querySelector('div');
-el.style.backgroundColor='blue';
-el.style.marginLeft='100px';
+// let el = document.querySelector('div');
+// el.style.backgroundColor='blue';
+// el.style.marginLeft='100px';
+
+
+const now = new Date('2020-05-01');
+console.log(now);
