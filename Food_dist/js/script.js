@@ -36,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     let deadLine = new Date("2020-12-16") - new Date();
     const timer = document.querySelectorAll(".timer__block span");
-    console.log(deadLine);
 
     function timerFunc(t, dl) {
         setTime();
@@ -132,7 +131,6 @@ document.addEventListener("DOMContentLoaded", () => {
             super(name, text, price, picture);
         }
         addToPage() {
-            console.log(this.name)
             return `<div class="menu__item">
             <img src=${this.picture} alt="vegy">
             <h3 class="menu__item-subtitle">${this.name}</h3>
@@ -147,7 +145,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
     const container = document.querySelector('.menu__field .container');
     const cards = document.querySelectorAll('.menu__item')
-    console.log(container);
     container.innerHTML = '';
     const k = new Card('Fit', 'qwerty', 400, 'img/tabs/elite.jpg');
     container.innerHTML += k.addToPage();
@@ -166,11 +163,15 @@ document.addEventListener("DOMContentLoaded", () => {
             const formData = new FormData(form);
             fetch('http://localhost/server.php', {
                 method: 'POST',
-                headers: {
-                    'Content-type':'application/json',
-                },
+                // headers: {
+                //     'Content-type':'application/json',
+                // },
                 body: formData
             }).then(data =>{
+                return data.text();
+            })
+            .then(data =>{
+                console.log(data);
                 showThanksModal(message.success);
             }).catch(() =>{
                 showThanksModal(message.fail);
@@ -202,7 +203,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     forms.forEach(form => {
-        console.log(form)
         postData(form);
     })
 
