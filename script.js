@@ -94,3 +94,6 @@ console.log(newArr);
 
 const some = ['dada','qwe', 'sda'];
 console.log(some.every(item => typeof(item) === 'string'));
+
+
+filter(item => )

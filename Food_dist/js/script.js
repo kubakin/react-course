@@ -16,6 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function setNull(k) {
+        if (k < 10) {
+            return '0' + k
+        } else {
+            return k;
+        }
+    };
+
     function showTabContent(i = 0) {
         tabsContent[i].classList.add("show", "fade");
         tabsContent[i].classList.remove("hide");
@@ -129,9 +137,11 @@ document.addEventListener("DOMContentLoaded", () => {
     class Card extends Menu {
         constructor(name, text, price, picture) {
             super(name, text, price, picture);
+            this.class = document.querySelector(
+                '.menu__field .container');
         }
         addToPage() {
-            return `<div class="menu__item">
+            this.class.innerHTML += `<div class="menu__item">
             <img src=${this.picture} alt="vegy">
             <h3 class="menu__item-subtitle">${this.name}</h3>
             <div class="menu__item-descr">${this.text}</div>
@@ -143,14 +153,26 @@ document.addEventListener("DOMContentLoaded", () => {
         </div>`
         }
     }
-    const container = document.querySelector('.menu__field .container');
-    const cards = document.querySelectorAll('.menu__item')
-    container.innerHTML = '';
-    const k = new Card('Fit', 'qwerty', 400, 'img/tabs/elite.jpg');
-    container.innerHTML += k.addToPage();
-    container.innerHTML += k.addToPage();
-    container.innerHTML += k.addToPage();
 
+    const posterFunction = async (url, data) => {
+        const res = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-type': 'application/json',
+            },
+            body: data
+        });
+        return await res.json();
+    };
+    const getResource = async (url) => {
+        const res = await fetch(url)
+        if (!res.ok) {
+            throw new Error(
+                `could not fetch ${url}, status: ${res.status}`
+            );
+        }
+        return await res.json();
+    };
 
 
     function postData(form) {
@@ -159,26 +181,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const statusMessage = document.createElement('div');
             statusMessage.classList.add('lds-dual-ring')
             form.append(statusMessage);
-            const request = new XMLHttpRequest();
-            const formData = new FormData(form);
-            fetch('http://localhost/server.php', {
-                method: 'POST',
-                // headers: {
-                //     'Content-type':'application/json',
-                // },
-                body: formData
-            }).then(data =>{
-                return data.text();
-            })
-            .then(data =>{
-                console.log(data);
-                showThanksModal(message.success);
-            }).catch(() =>{
-                showThanksModal(message.fail);
-
-            }).finally(()=>{
-                form.reset();
-            })
+            const obj = {};
+            new FormData(form)
+                .forEach((value, key) => {
+                    obj[key] = value;
+                })
+            posterFunction('http://localhost:3000/requests',
+                    JSON.stringify(obj))
+                .then(data => {
+                    showThanksModal(message.success);
+                }).catch(() => {
+                    showThanksModal(message.fail);
+                }).finally(() => {
+                    form.reset();
+                })
             // request.open('POST', 'server.php');
             // //request.setRequestHeader('Content-type', 'multipart/form-data') при отправке формы не требуется
             // const formData = new FormData(form);
@@ -231,8 +247,132 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
 
     }
+    getResource('http://localhost:3000/menu')
+        .then(data => {
+            data.forEach(({
+                title,
+                descr,
+                price,
+                img
+            }) => {
+                new Card(title, descr, price,
+                    img).addToPage();
+            })
+        })
 
 
 
-    
+
+
+    //slider
+
+
+    let ticker = 0;
+    let offset = 0;
+    const back = document.querySelector('.offer__slider-prev'),
+        up = document.querySelector('.offer__slider-next'),
+        pcsOfSlider = document.querySelector('.offer__slider'),
+        current = document.querySelector('#current'),
+        total = document.querySelector('#total'),
+        sliderWrapper = document.querySelector(
+            '.offer__slider-wrapper'),
+        sliderInner = document.querySelector('.offer__slider-inner');
+    const width = window.getComputedStyle(sliderWrapper).width;
+    console.log(width)
+    const slides = document.querySelectorAll('.offer__slide');
+
+    sliderInner.style.width = 100 * slides.length + '%';
+
+    slides.forEach(slide => {
+        slide.style.width = width;
+    });
+    up.addEventListener('click', () => {
+        if (ticker >=  slides.length - 1) {
+            offset = 0
+            ticker = 0;
+        } else {
+            offset = ++ticker * parseInt(width)
+            // ticker++;
+        }
+        displaySlide(ticker);
+
+    })
+    back.addEventListener('click', () => {
+        if (ticker <= 0) {
+            offset = parseInt(width) * (slides.length - 1)
+            ticker = slides.length - 1;
+        } else {
+            offset -= parseInt(width)
+            ticker--;
+        }
+        displaySlide(ticker);
+        
+    })
+        function displaySlide(tick) {
+            sliderInner.style.transform =
+            `translate(-${parseInt(width) * tick}px)`
+            changeCounter(tick)
+        }
+
+    //slider1
+
+        function changeCounter(count = 0) {
+            current.innerHTML = setNull(+count+1);
+            total.innerHTML = setNull(slides.length);
+        }
+    // function showNewSlide(tik) {
+    //     slides.forEach(item => {
+    //         if (slides[tik] == item) {
+    //             slides[tik].classList.remove('hide');
+    //         } else {
+    //             item.classList.add('hide');
+    //         }
+    //     })
+    // };
+
+    // up.addEventListener('click', () => {
+    //     if (ticker < pcsOfSlider.length - 1) {
+    //         showNewSlide(++ticker);
+    //     } else {
+    //         ticker = -1;
+    //         showNewSlide(++ticker);
+    //     }
+    //     changeCounter();
+
+    // })
+    // back.addEventListener('click', () => {
+    //     if (ticker > 0) {
+    //         showNewSlide(--ticker);
+    //     } else {
+    //         ticker = pcsOfSlider.length;
+    //         showNewSlide(--ticker);
+    //     }
+    //     changeCounter();
+    // })
+    changeCounter();
+
+
+
+
+    //slider navigation
+
+        const slider = document.querySelector('.offer__slider');
+        const indicators = document.createElement('ol');
+        indicators.classList.add('carousel-indicators');
+        slider.append(indicators);
+        slides.forEach((slide, idx)=>{
+            const dot = document.createElement('li');
+            dot.setAttribute('data-slide-to', idx);
+            dot.classList.add('dot')
+            indicators.append(dot);
+        })
+        
+
+        indicators.addEventListener('click', (e)=>{
+            displaySlide(e.target.getAttribute('data-slide-to'))
+        })
+
+
+
+
 });
