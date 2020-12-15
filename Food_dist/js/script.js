@@ -86,7 +86,8 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     modal.addEventListener("click", (e) => {
-        if (e.target.classList === modal.classList || e.target.getAttribute('data-close') == '') {
+        if (e.target.classList === modal.classList || e.target
+            .getAttribute('data-close') == '') {
             hideModal();
         }
     });
@@ -162,20 +163,34 @@ document.addEventListener("DOMContentLoaded", () => {
             statusMessage.classList.add('lds-dual-ring')
             form.append(statusMessage);
             const request = new XMLHttpRequest();
-            request.open('POST', 'server.php');
-            //request.setRequestHeader('Content-type', 'multipart/form-data') при отправке формы не требуется
             const formData = new FormData(form);
-            request.send(formData);
-            request.addEventListener('load', () => {
-                statusMessage.remove();
-                if (request.status == 200) {
-                    showThanksModal(message.success);
-                    form.reset();
-                } else {
-                    showThanksModal(message.fail);
-                }
+            fetch('http://localhost/server.php', {
+                method: 'POST',
+                headers: {
+                    'Content-type':'application/json',
+                },
+                body: formData
+            }).then(data =>{
+                showThanksModal(message.success);
+            }).catch(() =>{
+                showThanksModal(message.fail);
 
+            }).finally(()=>{
+                form.reset();
             })
+            // request.open('POST', 'server.php');
+            // //request.setRequestHeader('Content-type', 'multipart/form-data') при отправке формы не требуется
+            // const formData = new FormData(form);
+            // request.send(formData);
+            // request.addEventListener('load', () => {
+            //     statusMessage.remove();
+            //     if (request.status == 200) {
+            //         showThanksModal(message.success);
+            //         form.reset();
+            //     } else {
+            //     }
+
+            // })
         });
     };
     const forms = document.querySelectorAll('form');
@@ -217,4 +232,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
+
+
+    
 });
