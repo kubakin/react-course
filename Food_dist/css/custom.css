@@ -81,3 +81,7 @@
 .offer__slider {
   position: relative;
 }
+
+.active {
+  background-color: black;
+}

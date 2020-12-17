@@ -287,7 +287,7 @@ document.addEventListener("DOMContentLoaded", () => {
         slide.style.width = width;
     });
     up.addEventListener('click', () => {
-        if (ticker >=  slides.length - 1) {
+        if (ticker >= slides.length - 1) {
             offset = 0
             ticker = 0;
         } else {
@@ -306,20 +306,22 @@ document.addEventListener("DOMContentLoaded", () => {
             ticker--;
         }
         displaySlide(ticker);
-        
+
     })
-        function displaySlide(tick) {
-            sliderInner.style.transform =
+
+    function displaySlide(tick) {
+        sliderInner.style.transform =
             `translate(-${parseInt(width) * tick}px)`
-            changeCounter(tick)
-        }
+        changeCounter(tick);
+        changeActive(tick);
+    }
 
     //slider1
 
-        function changeCounter(count = 0) {
-            current.innerHTML = setNull(+count+1);
-            total.innerHTML = setNull(slides.length);
-        }
+    function changeCounter(count = 0) {
+        current.innerHTML = setNull(+count + 1);
+        total.innerHTML = setNull(slides.length);
+    }
     // function showNewSlide(tik) {
     //     slides.forEach(item => {
     //         if (slides[tik] == item) {
@@ -349,30 +351,122 @@ document.addEventListener("DOMContentLoaded", () => {
     //     }
     //     changeCounter();
     // })
-    changeCounter();
 
 
 
 
     //slider navigation
+    let dots = [];
+    const slider = document.querySelector('.offer__slider');
+    const indicators = document.createElement('ol');
+    indicators.classList.add('carousel-indicators');
+    slider.append(indicators);
+    slides.forEach((slide, idx) => {
+        const dot = document.createElement('li');
+        dot.setAttribute('data-slide-to', idx);
+        dot.classList.add('dot')
+        dots.push(dot)
+        indicators.append(dot);
+    })
 
-        const slider = document.querySelector('.offer__slider');
-        const indicators = document.createElement('ol');
-        indicators.classList.add('carousel-indicators');
-        slider.append(indicators);
-        slides.forEach((slide, idx)=>{
-            const dot = document.createElement('li');
-            dot.setAttribute('data-slide-to', idx);
-            dot.classList.add('dot')
-            indicators.append(dot);
+    function changeActive(tek = 0) {
+        dots.forEach((dt, idx) => {
+            if (tek == idx) {
+                dt.style.opacity = 1;
+            } else {
+                dt.style.opacity = 0.5;
+            }
         })
-        
+    }
 
-        indicators.addEventListener('click', (e)=>{
-            displaySlide(e.target.getAttribute('data-slide-to'))
+    indicators.addEventListener('click', (e) => {
+        if (e.target.getAttribute('data-slide-to')) {
+            ticker = e.target.getAttribute('data-slide-to')
+            displaySlide(ticker)
+        }
+    })
+
+
+    changeCounter();
+    changeActive();
+
+
+
+
+
+
+
+    //calculate
+
+
+    const activeButton = document.querySelector(
+        '.calculating__choose_big')
+    const buttnsActivity = document.querySelectorAll(
+        '.calculating__choose_big .calculating__choose-item');
+    const sexs = document.querySelectorAll('#gender div');
+    const sex = document.querySelector('#gender');
+    let obj = {};
+    const result = document.querySelector('.calculating__result span');
+
+    function calc() {
+        if (obj.weight && obj.height && obj.age && obj.k) {
+            if (obj.sex == 'male') {
+                return ((88.36 + (13.4 * obj.weight) + (4.8 * obj
+                    .height) + (5.7 *
+                    obj.age)) * obj.k).toFixed(0);
+            } else {
+                return ((447.6 + (9.2 * obj.weight) + (3.1 * obj
+                    .height) + (4.3 *
+                    obj.age)) * obj.k).toFixed(0);
+            }
+        } else return 0;
+    }
+
+
+    sex.addEventListener('click', (
+        e) => { // прослушивание на кнопки ПОЛА
+        setGreen(sexs, e);
+        obj.sex = e.target.id;
+        result.innerHTML = calc();
+    })
+
+    function setGreen(cls, ev) {
+        cls.forEach(item => {
+            if (ev.target == item) {
+                ev.target.classList.add(
+                    'calculating__choose-item_active'
+
+                );
+
+            } else {
+                item.classList.remove(
+                    'calculating__choose-item_active'
+                );
+            }
+        });
+    }
+    activeButton.addEventListener('click', (e) => {
+        setGreen(buttnsActivity, e);
+
+        obj.k = +e.target.getAttribute('data-ration')
+        result.innerHTML = calc()
+
+
+
+    })
+    const inps = document.querySelectorAll(
+        '.calculating__choose_medium input');
+    inps.forEach(inp => {
+
+        inp.addEventListener('input', (e) => {
+            // console.log(e.target.value.replace(/\D/ig, ''))
+            e.target.value = +e.target.value.replace(
+                /\D/ig, '')
+            obj[e.target.id] = +e.target.value;
+
+            result.innerHTML = calc()
         })
+    })
 
-
-
-
+    result.innerHTML = calc();
 });

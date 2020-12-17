@@ -83,17 +83,45 @@ let personalMovieDB = {
 //filter
 
 
-const names = ['Ivan', 'Ann', 'Ksenia', 'Voldemair'];
-const shortName = names.filter(name => name.length <= 5);
-console.log(shortName);
+// const names = ['Ivan', 'Ann', 'Ksenia', 'Voldemair'];
+// const shortName = names.filter(name => name.length <= 5);
+// console.log(shortName);
 
-const newArr = names.map(name=>{
-  return name.toLowerCase();
-});
-console.log(newArr);
+// const newArr = names.map(name=>{
+//   return name.toLowerCase();
+// });
+// console.log(newArr);
 
-const some = ['dada','qwe', 'sda'];
-console.log(some.every(item => typeof(item) === 'string'));
+// const some = ['dada','qwe', 'sda'];
+// console.log(some.every(item => typeof(item) === 'string'));
 
 
-filter(item => )
+// filter(item => )
+
+const ans = prompt('Введи имя','');
+const reg = /n/ig;
+//flags
+//i не смотрим на регистр
+//g несколько вхождений
+//m многострочный режимы
+//SEARCH ПОИСК ВОЗВР -1 ИЛИ 1
+
+//console.log(ans.match(reg));
+
+console.log(ans.replace(/\./g, "*"));
+console.log('12-34-56'.match(/\d/g));
+
+
+//classes regexp
+
+// \d числа
+// \D не числа
+// \w слова буквы
+// \W Не буквы
+// \s пробелы
+
+
+
+const str = 'My name is R2D2';
+
+console.log(str.match(/\w\d\w\d/));
